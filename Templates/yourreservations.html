@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}
+Your Reservations
+{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="container mt-5">
+        <h1>Your Reservations</h1>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Restaurant</th>
+                        <th>Mesa</th>
+                        <th>Fecha y Hora</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reservation in reservations %}
+                    <tr>
+                        <td>{{ reservation.restaurant.restaurant_name }}</td>
+                        <td>{{ reservation.id_mesa }}</td>
+                        <td>{{ reservation.reservation_date_time }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-restaurant mt-5">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul class="flashes">
+        {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    <div class="info">
+        <img src="{{ url_for('static', filename=restaurant.image_path.split('static/')[-1]) }}" alt="{{ restaurant.restaurant_name }}">
+        <div class="info-2">
+            <h2>{{ restaurant.restaurant_name }}</h2>
+            <p><strong>Food Type:</strong> {{ restaurant.food_type }}</p>
+            <p><strong>Location:</strong> {{ restaurant.street }} {{ restaurant.city }}, {{ restaurant.state }}</p>
+            <p><strong>Opening Hours:</strong> {{ restaurant.opening_hours }}</p>
+            <p><strong>Description:</strong> {{ restaurant.description }}</p>
+            <p><strong>Owner:</strong> {{ user.name }}</p>
+
+            <a href="{{ url_for('dashboard') }}">Back to Restaurants</a>
+            <button class="reservation-btn" data-toggle="modal" data-target="#reservationModal">Make Reservation</button>
+        </div>
+    </div>
+    <h1><span class="arrow-down">▼</span> Our Menu <span class="arrow-down">▼</span></h1>
+    <img class="menu-img centered" src="{{ url_for('static', filename=restaurant.image_path_menu.split('static/')[-1]) }}" alt="{{ restaurant.restaurant_name }}">
+</div>
+
+<div class="modal fade" id="reservationModal" tabindex="-1" role="dialog" aria-labelledby="reservationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reservationModalLabel">Make a Reservation</h5>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: rgb(0, 0, 0); position: absolute; right: 10px;">
+                    <span aria-hidden="true">×</span>
+                </button>
+                
+            </div>
+            <div class="modal-body d-flex justify-content-center">
+                <form method="POST" action="{{ url_for('restaurant', restaurant_id=restaurant.restaurant_id) }}">
+                    {{ form.hidden_tag() }}
+                    <label for="reservation_date_time">Date and Time:</label><br>
+                    <input type="datetime-local" name="reservation_date_time" id="reservation_date_time" required>
+                    
+                    <script>
+                        const dateTimeInput = document.getElementById('reservation_date_time');
+
+                        function setMinDateTime() {
+                            const now = new Date();
+                            const year = now.getFullYear();
+                            const month = String(now.getMonth() + 1).padStart(2, '0');
+                            const day = String(now.getDate()).padStart(2, '0');
+                            const hours = String(now.getHours()).padStart(2, '0');
+                            const formattedDateTime = `${year}-${month}-${day}T${hours}:00`;
+                            dateTimeInput.min = formattedDateTime;
+                        }
+
+                        setMinDateTime();
+                        setInterval(setMinDateTime, 60000);
+                    </script>
+
+                    <br>
+                    <label for="id_mesa">Table:</label><br>
+                    <select name="id_mesa" id="id_mesa" required>
+                        {% for mesa in mesas %}
+                        <option value="{{ mesa.id_mesa }}">Table {{ mesa.id_mesa }} (Capacity: {{ mesa.capacity }})</option>
+                        {% endfor %}
+                    </select>
+                    <br><br>
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary bg-primary" style="color: white;">Reserve</button>
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
