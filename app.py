@@ -10,16 +10,21 @@ from flask_wtf.csrf import CSRFProtect
 from flask_bcrypt import Bcrypt 
 from datetime import datetime
 from sqlalchemy.sql import func
+import os
 
 app = Flask(__name__)
 
-user= 'root'
-password = 'R@xv5128'
-server = 'mysql.ronhom.com'
-db_name = 'RestaurantReservation'
+user= os.getenv('USER_RR')
+password= os.getenv('PASSWORD_RR')
+server= os.getenv('SERVER_RR')
+db_name = os.getenv('DB_NAME_RR')
+secret_key = os.getenv('SECRET_KEY_RR')
+app.config['SECRET_KEY'] = secret_key
+
+
 encoded_password = quote_plus(password)
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{user}:{encoded_password}@{server}/{db_name}' 
-app.config['SECRET_KEY'] = 'secretkey'
+
 csrf = CSRFProtect(app)
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
